@@ -16,7 +16,7 @@ services:
 
   # Define web service and envoy sidecar proxy
   web:
-    image: nicholasjackson/fake-service:v0.7.3
+    image: nicholasjackson/fake-service:v0.11.2
     environment:
       LISTEN_ADDR: 0.0.0.0:9090
       UPSTREAM_URIS: http://localhost:9091
@@ -45,7 +45,7 @@ services:
   
   # Define currency service and envoy sidecar proxy for version 2 of the service
   currency_dc1:
-    image: nicholasjackson/fake-service:v0.7.3
+    image: nicholasjackson/fake-service:v0.11.2
     environment:
       LISTEN_ADDR: localhost:9090
       NAME: currency-dc1
@@ -103,7 +103,7 @@ services:
 
   # Define api service and envoy sidecar proxy for version 2 of the service
   payments_v2:
-    image: nicholasjackson/fake-service:v0.7.3
+    image: nicholasjackson/fake-service:v0.11.2
     environment:
       UPSTREAM_URIS: http://localhost:9091
       LISTEN_ADDR: localhost:9090
