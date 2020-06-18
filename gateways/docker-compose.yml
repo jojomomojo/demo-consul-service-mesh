@@ -2,7 +2,7 @@ version: "3.3"
 services:
 
   consul-dc1:
-    image: consul:1.6.1
+    image: consul:1.8.0-beta2
     command: ["consul","agent","-config-file=/config/consul-dc1.hcl"]
     volumes:
       - "../consul_config:/config"
@@ -30,7 +30,7 @@ services:
     ports:
       - 9090:9090
   web_envoy:
-    image: nicholasjackson/consul-envoy:v1.6.1-v0.10.0
+    image: nicholasjackson/consul-envoy:v1.8.0-beta2-v0.14.1
     environment:
       CONSUL_HTTP_ADDR: 10.5.0.2:8500
       CONSUL_GRPC_ADDR: 10.5.0.2:8502
@@ -55,7 +55,7 @@ services:
       dc1:
         ipv4_address: 10.5.0.4
   currency_proxy:
-    image: nicholasjackson/consul-envoy:v1.6.1-v0.10.0
+    image: nicholasjackson/consul-envoy:v1.8.0-beta2-v0.14.1
     environment:
       CONSUL_HTTP_ADDR: 10.5.0.2:8500
       CONSUL_GRPC_ADDR: 10.5.0.2:8502
@@ -66,7 +66,7 @@ services:
     network_mode: "service:currency_dc1"
 
   gateway-dc1:
-    image: nicholasjackson/consul-envoy:v1.6.1-v0.10.0
+    image: nicholasjackson/consul-envoy:v1.8.0-beta2-v0.14.1
     environment:
       CONSUL_HTTP_ADDR: 10.5.0.2:8500
       CONSUL_GRPC_ADDR: 10.5.0.2:8502
@@ -87,7 +87,7 @@ services:
 
  
   consul-dc2:
-    image: consul:1.6.1
+    image: consul:1.8.0-beta2
     command: ["consul","agent","-config-file=/config/consul-dc2.hcl"]
     volumes:
       - "../consul_config:/config"
@@ -111,7 +111,7 @@ services:
       dc2:
         ipv4_address: 10.6.0.3
   payments_proxy_v2:
-    image: nicholasjackson/consul-envoy:v1.6.1-v0.10.0
+    image: nicholasjackson/consul-envoy:v1.8.0-beta2-v0.14.1
     environment:
       CONSUL_HTTP_ADDR: 10.6.0.2:8500
       CONSUL_GRPC_ADDR: 10.6.0.2:8502
@@ -125,7 +125,7 @@ services:
   
   
   gateway-dc2:
-    image: nicholasjackson/consul-envoy:v1.6.1-v0.10.0
+    image: nicholasjackson/consul-envoy:v1.8.0-beta2-v0.14.1
     environment:
       CONSUL_HTTP_ADDR: 10.6.0.2:8500
       CONSUL_GRPC_ADDR: 10.6.0.2:8502
