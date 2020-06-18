@@ -35,7 +35,7 @@ services:
       CONSUL_HTTP_ADDR: 10.5.0.2:8500
       CONSUL_GRPC_ADDR: 10.5.0.2:8502
       SERVICE_CONFIG: /config/web_v1.hcl
-      CENTRAL_CONFIG: "central_config/payments-resolver.hcl;central_config/currency-resolver.hcl;central_config/web-defaults.hcl;central_config/payments-defaults.hcl;central_config/currency-defaults.hcl"
+      CENTRAL_CONFIG: "central_config/web-defaults.hcl"
     volumes:
       - "./service_config:/config"
       - "./central_config:/central_config"
@@ -60,8 +60,10 @@ services:
       CONSUL_HTTP_ADDR: 10.5.0.2:8500
       CONSUL_GRPC_ADDR: 10.5.0.2:8502
       SERVICE_CONFIG: /config/currency_dc1.hcl
+      CENTRAL_CONFIG: "central_config/currency-defaults.hcl;central_config/currency-resolver.hcl"
     volumes:
       - "./service_config:/config"
+      - "./central_config:/central_config"
     command: ["consul", "connect", "envoy","-sidecar-for", "currency-dc1"]
     network_mode: "service:currency_dc1"
 
@@ -116,7 +118,7 @@ services:
       CONSUL_HTTP_ADDR: 10.6.0.2:8500
       CONSUL_GRPC_ADDR: 10.6.0.2:8502
       SERVICE_CONFIG: /config/payments_v2.hcl
-      CENTRAL_CONFIG: "central_config/payments-resolver.hcl;central_config/currency-resolver.hcl;central_config/web-defaults.hcl;central_config/payments-defaults.hcl;central_config/currency-defaults.hcl"
+      CENTRAL_CONFIG: "central_config/payments-defaults.hcl;central_config/payments-resolver.hcl"
     volumes:
       - "./service_config:/config"
       - "./central_config:/central_config"
