@@ -1,0 +1,85 @@
+version: "3.7"
+
+services:
+  consul-dc1:
+    image: consul:1.8.0-rc1
+    command: ["consul","agent","-config-file=/config/consul-dc1.hcl"]
+    volumes:
+      - "../consul_config:/config"
+    ports:
+      - 8500:8500
+    networks:
+      dc1:
+        ipv4_address: 10.5.0.2
+      wan:
+        ipv4_address: 192.169.7.2
+
+  gateway-dc1:
+    image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+    command: [
+      "consul",
+      "connect", "envoy",
+      "-mesh-gateway",
+      "-register",
+      "-address", "10.5.0.5:443",
+      "-wan-address", "192.169.7.3:443",
+      "--",
+      "-l", "debug"]
+    networks:
+      dc1:
+        ipv4_address: 10.5.0.5
+      wan:
+        ipv4_address: 192.169.7.3
+
+  web-dc1:
+    image: nicholasjackson/fake-service:v0.11.2
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9090
+      NAME: web
+      MESSAGE: "Hello World"
+      SERVER_TYPE: "http"
+      UPSTREAM_URIS: http://localhost:9091
+      HTTP_CLIENT_KEEP_ALIVES: "false"
+    networks:
+      dc1:
+        ipv4_address: 10.5.0.3
+    ports:
+      - 9090:9090
+  web-proxy-dc1:
+    image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/web_v1.hcl
+      CENTRAL_CONFIG: "central_config/web-defaults.hcl"
+    volumes:
+      - "./service_config:/config"
+      - "./central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "web-v1"]
+    network_mode: "service:web-dc1"
+  
+  currency-dc1:
+    image: nicholasjackson/fake-service:v0.11.2
+    environment:
+      LISTEN_ADDR: localhost:9090
+      NAME: currency
+      MESSAGE: "2 USD for 1 GBP"
+      SERVER_TYPE: "http"
+    networks:
+      dc1:
+        ipv4_address: 10.5.0.4
+  currency-proxy-dc1:
+    image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/currency_v1.hcl
+      CENTRAL_CONFIG: "central_config/currency-defaults.hcl;central_config/currency-resolver.hcl"
+    volumes:
+      - "./service_config:/config"
+      - "./central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "currency-v1"]
+    network_mode: "service:currency-dc1"

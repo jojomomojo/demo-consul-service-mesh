@@ -1,6 +1,6 @@
 service {
   name = "currency"
-  id = "currency-dc1"
+  id = "currency-v1"
   address = "10.5.0.4"
   port = 9090
   
