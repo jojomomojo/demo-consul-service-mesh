@@ -2,7 +2,7 @@
 
 ```
 > docker-compose -f docker-compose.yml -f docker-compose-dc1.yml -f docker-compose-dc2.yml up -d
-> curl http://localhost:909
+> curl http://localhost:9090
 
 {
   "name": "web",
